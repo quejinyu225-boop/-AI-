@@ -1,0 +1,5 @@
+{
+  "name": "医美AI方案规划智能体",
+  "description": "面向医美机构的B端智能方案规划系统，支持卡项管理与智能复合方案生成。",
+  "requestFramePermissions": []
+}
