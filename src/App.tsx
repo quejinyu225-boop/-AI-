@@ -1,18 +1,9 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState } from 'react';
 import { 
   MessageSquare, 
   Sparkles, 
-  ChevronDown, 
-  ChevronUp, 
-  CheckCircle2, 
   Search, 
   CreditCard, 
-  Clock, 
   TrendingUp, 
   Target, 
   Zap,
@@ -20,18 +11,22 @@ import {
   Bot,
   Stethoscope,
   ShieldCheck,
-  ArrowRight,
   PlusCircle,
   History,
   LayoutDashboard,
-  Star,
   CalendarDays,
   Smartphone,
   Droplets,
   Sun,
   Activity,
+  Maximize2,
+  QrCode,
+  Layers,
+  ArrowRightLeft,
   Shield,
-  Info
+  ArrowRight,
+  ChevronDown,
+  CheckCircle2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -51,516 +46,455 @@ interface RoadmapItem {
   icon: React.ReactNode;
   tips?: string;
   isPaid?: boolean;
+  description: string;
 }
 
-export default function App() {
-  const [isWorkflowExpanded, setIsWorkflowExpanded] = useState(true);
-  const [isAdminView, setIsAdminView] = useState(false);
+const FaceScan = () => {
+  return (
+    <div className="relative w-full h-[450px] flex items-center justify-center overflow-hidden">
+      {/* Background Cyber Grid */}
+      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#8EC5FC_1px,transparent_1px)] [background-size:20px_20px]" />
+      
+      {/* Simulation Face Glow */}
+      <div className="absolute w-[300px] h-[300px] bg-[#E0C3FC] rounded-full blur-[100px] opacity-20 animate-pulse" />
+      
+      {/* The "3D" Face Silhouette (SVG Representation) */}
+      <div className="relative w-64 h-80 z-10">
+        <svg viewBox="0 0 200 250" className="w-full h-full drop-shadow-[0_0_15px_rgba(142,197,252,0.3)]">
+          <defs>
+            <linearGradient id="faceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#fff" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#E0C3FC" stopOpacity="0.4" />
+            </linearGradient>
+          </defs>
+          <path 
+            d="M100,20 C140,20 170,50 175,100 C180,180 140,230 100,240 C60,230 20,180 25,100 C30,50 60,20 100,20" 
+            fill="url(#faceGrad)" 
+            className="transition-all duration-700"
+          />
+          {/* Wireframe details */}
+          <path d="M60,80 Q100,70 140,80" fill="none" stroke="#8EC5FC" strokeWidth="0.5" strokeDasharray="2,2" />
+          <path d="M70,160 Q100,180 130,160" fill="none" stroke="#E0C3FC" strokeWidth="1" />
+        </svg>
 
-  const workflowSteps: WorkflowStep[] = [
-    { id: '1', title: '语义解析', content: '识别核心诉求：法令纹（韧带松弛型）、肤色暗沉（代谢滞后型）。' },
-    { id: '2', title: '卡项校验', content: '检测资产：热玛吉（面部）剩余 2 次，有效期至 2025.12。' },
-    { id: '3', title: '逻辑配伍', content: '利用热玛吉深层加热促胶原新生，协同 M22 爆破表皮黑色素。' },
-    { id: '4', title: '冲突检测', content: '安全校验：热玛吉与光子嫩肤间隔需满 14 天，排期合规。' },
-  ];
+        {/* Dynamic Scanning Beam with Glow */}
+        <motion.div 
+          initial={{ top: '0%' }}
+          animate={{ top: '100%' }}
+          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          className="absolute left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-[#E0C3FC] to-transparent shadow-[0_0_20px_#E0C3FC,0_0_40px_#8EC5FC] z-20"
+        >
+          {/* Light flare at the scan line */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-4 bg-gradient-to-r from-transparent via-white/20 to-transparent blur-md" />
+        </motion.div>
+
+        {/* Data Nodes for Face Topology */}
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="absolute top-[60%] right-[20%] w-3 h-3 bg-white rounded-full border-2 border-purple-400 shadow-[0_0_10px_purple]"
+        />
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
+          className="absolute top-[40%] left-[25%] w-3 h-3 bg-white rounded-full border-2 border-blue-400 shadow-[0_0_10px_blue]"
+        />
+      </div>
+
+      {/* Layer Micro-Info (Glassmorphism Tabs) */}
+      <div className="absolute bottom-6 left-10 right-10 flex justify-between gap-4">
+        <div className="flex-1 bg-white/5 backdrop-blur-xl border border-white/20 p-3 rounded-2xl flex flex-col items-center">
+          <Layers size={14} className="mb-1.5 text-purple-400" />
+          <span className="text-[9px] text-white/60 font-black tracking-widest uppercase">SMAS Layer</span>
+          <span className="text-xs font-black text-white mt-1">ACTIVE SCAN</span>
+        </div>
+        <div className="flex-1 bg-white/5 backdrop-blur-xl border border-white/20 p-3 rounded-2xl flex flex-col items-center">
+          <Activity size={14} className="mb-1.5 text-blue-400" />
+          <span className="text-[9px] text-white/60 font-black tracking-widest uppercase">Collagen</span>
+          <span className="text-xs font-black text-white mt-1">+12% DENSITY</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default function App() {
+  const [isAdminView, setIsAdminView] = useState(false);
 
   const roadmap: RoadmapItem[] = [
     { 
       week: 1, 
-      phase: 'Phase 1: 启动期', 
-      title: '热玛吉 (面部)', 
+      phase: 'Deep Lifting Phase', 
+      title: 'Thermage FLX (Standard)', 
       type: 'in-card', 
-      icon: <Zap size={14} />, 
-      isPaid: true 
+      icon: <Zap size={18} />, 
+      isPaid: true,
+      description: 'The core stimulation starting week. Reactivating dormant assets for skin revitalization.'
     },
     { 
       week: 2, 
-      phase: 'Phase 1: 观察期', 
-      title: '皮肤自我修复', 
+      phase: 'Recovery Cycle', 
+      title: 'Barrier Repair Therapy', 
       type: 'observation', 
-      icon: <Activity size={14} />, 
-      tips: '多补水、物理防晒' 
+      icon: <Shield size={18} />, 
+      tips: 'Intense Hydration Needed',
+      description: 'Stabilizing the skin micro-environment post-stimulation.'
     },
     { 
       week: 3, 
-      phase: 'Phase 2: 焕亮期', 
-      title: 'M22 AOPT 光子嫩肤', 
+      phase: 'Light Energy Phase', 
+      title: 'AOPT Photon Rejuvenation', 
       type: 'out-card', 
-      icon: <Sparkles size={14} />, 
-      isPaid: false 
-    },
-    { 
-      week: 4, 
-      phase: 'Phase 2: 补水期', 
-      title: '基础玻尿酸导入', 
-      type: 'out-card', 
-      icon: <Droplets size={14} />, 
-      isPaid: false 
+      icon: <Sparkles size={18} />, 
+      isPaid: false,
+      description: 'Precisely targeting melanin and improving global skin luminosity.'
     },
     { 
       week: 5, 
-      phase: 'Phase 3: 维稳期', 
-      title: '居家护理周', 
-      type: 'maintenance', 
-      icon: <Sun size={14} />, 
-      tips: '高浓度VC修复' 
-    },
-    { 
-      week: 6, 
-      phase: 'Phase 3: 二次加强', 
-      title: '热玛吉 (眼周/局部)', 
-      type: 'in-card', 
-      icon: <Target size={14} />, 
-      isPaid: true 
-    },
-    { 
-      week: 7, 
-      phase: 'Phase 4: 巩固期', 
-      title: '皮肤质感微调', 
-      type: 'maintenance', 
-      icon: <Shield size={14} /> 
+      phase: 'Texture Enhancement', 
+      title: 'Dermal Moisture Infusion', 
+      type: 'out-card', 
+      icon: <Droplets size={18} />, 
+      isPaid: false,
+      description: 'Filling micro-gaps and enhancing the overall plumpness of the skin.'
     },
     { 
       week: 8, 
-      phase: 'Phase 4: 巡检期', 
-      title: '最后的质感巡检', 
+      phase: 'Assessment Week', 
+      title: 'Aesthetic Audit', 
       type: 'maintenance', 
-      icon: <Search size={14} /> 
+      icon: <ShieldCheck size={18} />, 
+      description: 'Final analysis of transformation efficacy and long-term planning.'
     },
   ];
 
   const stats = [
-    { label: '方案制定时间', value: '5min', subValue: '20min → 5min', icon: Clock, color: 'text-blue-600' },
-    { label: '方案准确率', value: '96%', subValue: '基于10w+临床案例', icon: Target, color: 'text-emerald-600' },
-    { label: '采纳率提升', value: '+32%', subValue: '对比人工咨询', icon: TrendingUp, color: 'text-orange-600' },
-    { label: '核销率', value: '67%', subValue: '38% → 67%', icon: CreditCard, color: 'text-purple-600' },
-    { label: '客单价提升', value: '+28%', subValue: '复合方案带动', icon: Zap, color: 'text-rose-600' },
+    { label: 'Redemption Growth', value: '+45%', subValue: 'Asset Reactivation', icon: CreditCard, color: 'text-blue-600' },
+    { label: 'Plan Compliance', value: '88%', subValue: 'Vs Market Avg 52%', icon: Target, color: 'text-emerald-600' },
+    { label: 'Unit Revenue Up', value: '￥2.4k', subValue: 'Hybrid Plan Upsell', icon: TrendingUp, color: 'text-purple-600' },
   ];
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] text-slate-800 font-sans selection:bg-[#52C41A]/20">
-      {/* Header */}
-      <header className="h-16 border-b border-slate-100 bg-white/60 backdrop-blur-xl sticky top-0 z-50 px-8 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 bg-[#52C41A] rounded-xl flex items-center justify-center text-white shadow-lg shadow-[#52C41A]/30">
-            <Stethoscope size={20} strokeWidth={2.5} />
+    <div className="min-h-screen bg-[#FDFDFD] text-slate-800 font-sans selection:bg-[#E0C3FC]/30">
+      {/* High-end Navigation */}
+      <header className="h-20 border-b border-slate-100 bg-white/40 backdrop-blur-2xl sticky top-0 z-50 px-12 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-gradient-to-tr from-[#8EC5FC] to-[#E0C3FC] rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-[#8EC5FC]/30">
+            <Stethoscope size={28} strokeWidth={2.5} />
           </div>
           <div>
-            <h1 className="text-lg font-extrabold tracking-tight text-slate-900">AesthetiCal <span className="text-[#52C41A]">Pro</span></h1>
-            <p className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Smart Planning Intelligence</p>
+            <h1 className="text-2xl font-black tracking-tighter text-slate-900 leading-none">AesthetiCal <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8EC5FC] to-[#E0C3FC]">AI</span></h1>
+            <p className="text-[10px] text-slate-400 uppercase tracking-[0.4em] font-black mt-1">Digital Aesthetic Vision</p>
           </div>
         </div>
         
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-4 text-slate-400">
+             <Search size={20} className="hover:text-slate-900 cursor-pointer transition-colors" />
+             <History size={20} className="hover:text-slate-900 cursor-pointer transition-colors" />
+          </div>
+          <div className="h-10 w-px bg-slate-100" />
           <button 
             onClick={() => setIsAdminView(!isAdminView)}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold transition-all border shadow-sm ${
-              isAdminView 
-                ? 'bg-purple-600 text-white border-purple-600' 
-                : 'bg-white text-slate-500 border-slate-200 hover:border-purple-300'
-            }`}
+            className="group relative flex items-center gap-3 px-8 py-3.5 bg-slate-900 text-white rounded-full text-[11px] font-black tracking-widest uppercase transition-all hover:pr-10 hover:shadow-2xl hover:shadow-[#E0C3FC]/30 overflow-hidden"
           >
-            <LayoutDashboard size={14} />
-            {isAdminView ? '管理后台已开启' : '进入机构后台'}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#8EC5FC]/20 to-[#E0C3FC]/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <LayoutDashboard size={14} className="z-10" />
+            <span className="z-10">Decision Hub</span>
           </button>
-          
-          <div className="h-6 w-px bg-slate-100" />
-          
-          <div className="flex items-center gap-3">
-            <div className="text-right hidden sm:block">
-              <p className="text-xs font-bold text-slate-900">咨询智库</p>
-              <p className="text-[10px] text-[#52C41A]">在线协助中</p>
-            </div>
-            <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden text-slate-400">
-               <User size={16} />
-            </div>
-          </div>
         </div>
       </header>
 
-      <main className="max-w-[1600px] mx-auto p-8 grid grid-cols-12 gap-8 h-[calc(100vh-64px)] items-start overflow-hidden">
+      <main className="max-w-[1800px] mx-auto p-12 grid grid-cols-12 gap-12 h-[calc(100vh-80px)] overflow-hidden">
         
-        {/* Left Column: Emotional Consultation Hub */}
-        <section className="col-span-12 lg:col-span-4 h-full flex flex-col pt-2 overflow-hidden">
-          <div className="flex-1 bg-white rounded-[32px] border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col overflow-hidden relative group">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#52C41A]/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
-            
-            <div className="p-5 border-b border-slate-50 flex items-center justify-between bg-white/50 backdrop-blur-sm z-10">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-[#52C41A]/10 rounded-lg">
-                  <MessageSquare size={16} className="text-[#52C41A]" />
-                </div>
-                <span className="font-bold text-sm tracking-tight">情感化对话区</span>
-              </div>
-              <button className="text-slate-300 hover:text-slate-500 transition-colors">
-                <History size={16} />
-              </button>
+        {/* Left: AI Diagnosis Cabin (Cyber Vision) */}
+        <section className="col-span-12 lg:col-span-5 h-full flex flex-col pt-2 overflow-hidden">
+          <div className="flex-1 bg-white rounded-[56px] border border-slate-100 shadow-[0_30px_60px_rgba(142,197,252,0.12)] flex flex-col overflow-hidden relative">
+            <div className="p-10 pb-0">
+               <div className="flex items-center justify-between mb-3">
+                 <div className="flex items-center gap-2">
+                   <div className="w-2.5 h-2.5 rounded-full bg-blue-400 shadow-[0_0_10px_#60A5FA]" />
+                   <span className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400">Scan Operation: Active</span>
+                 </div>
+                 <div className="flex items-center gap-2 px-4 py-1.5 bg-purple-50 text-purple-600 rounded-full text-[10px] font-black uppercase tracking-wider border border-purple-100">
+                   <Target size={12} />
+                   High-Precision Analysis
+                 </div>
+               </div>
+               <h2 className="text-4xl font-black text-slate-900 tracking-tighter">AI 智能诊疗舱</h2>
+               <p className="text-sm text-slate-400 mt-4 leading-relaxed font-medium">
+                 正在进行多维人脸建模，通过SMAS层热感应技术锁定深层老化节点。
+               </p>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-8 z-10">
-              <div className="flex justify-end pr-2">
-                <motion.div 
-                  initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
-                  className="max-w-[85%] bg-slate-900 text-white p-4 rounded-3xl rounded-tr-none shadow-xl shadow-slate-200"
-                >
-                  <p className="text-[13px] leading-relaxed font-medium">
-                    我想改善法令纹和肤色暗沉，做过热玛吉还有两次没用。
-                  </p>
-                </motion.div>
-              </div>
+            <div className="flex-1 flex flex-col relative px-10 pb-10">
+              <FaceScan />
+              
+              {/* Floating Dialogue Hub (Overlaying bottom of Scan) */}
+              <div className="absolute top-[55%] inset-x-8 bottom-6 z-30 flex flex-col">
+                <div className="flex-1 bg-white/60 backdrop-blur-2xl rounded-[40px] border border-white/60 shadow-[0_20px_40px_rgba(142,197,252,0.15)] flex flex-col overflow-hidden">
+                  {/* Fade mask at top */}
+                  <div className="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-white/80 to-transparent z-10 pointer-events-none" />
+                  
+                  <div className="flex-1 overflow-y-auto p-8 space-y-6 scroll-smooth pt-12">
+                    {/* User Query */}
+                    <div className="flex justify-end">
+                       <div className="max-w-[85%] bg-slate-900 text-white px-5 py-3 rounded-3xl rounded-tr-none shadow-lg">
+                          <p className="text-[13px] font-medium leading-relaxed">我想改善法令纹和肤色暗沉，做过热玛吉还有两次没用</p>
+                       </div>
+                    </div>
 
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
-                  <Bot size={22} className="text-[#52C41A]" />
-                </div>
-                <div className="flex-1 space-y-6">
-                  <motion.div 
-                    initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-                    className="p-5 bg-[#52C41A]/5 rounded-[24px] rounded-tl-none border border-[#52C41A]/10"
-                  >
-                    <p className="text-[13px] text-slate-700 leading-relaxed">
-                      收到。针对您的<span className="font-bold text-slate-900">法令纹焦虑</span>，我已为您检索了个人档案及院内项目库。我会优先盘活您的<span className="font-bold text-[#52C41A]">热玛吉余次</span>，并协同肤色提亮方案，为您制定“深层提升+表皮焕亮”的复合计划。
-                    </p>
-                  </motion.div>
-
-                  <div className="bg-slate-50/80 rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
-                    <button 
-                      onClick={() => setIsWorkflowExpanded(!isWorkflowExpanded)}
-                      className="w-full p-4 flex items-center justify-between text-xs font-bold text-slate-400 uppercase tracking-widest hover:bg-slate-100 transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Zap size={14} className="text-amber-400" />
-                        面诊逻辑思维链
-                      </div>
-                      {isWorkflowExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                    </button>
-                    
-                    <AnimatePresence>
-                      {isWorkflowExpanded && (
-                        <motion.div 
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden border-t border-slate-100"
-                        >
-                          <div className="p-5 space-y-5">
-                            {workflowSteps.map((step, idx) => (
-                              <div key={idx} className="flex gap-4">
-                                <div className="flex flex-col items-center">
-                                  <div className="w-6 h-6 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-400">
-                                    {idx + 1}
-                                  </div>
-                                  {idx !== workflowSteps.length - 1 && <div className="w-px h-full bg-slate-200 my-1" />}
-                                </div>
-                                <div className="pb-2">
-                                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-wider">
-                                    {idx === 0 && '[分析] '}
-                                    {idx === 1 && '[资产] '}
-                                    {idx === 2 && '[科学] '}
-                                    {idx === 3 && '[安全] '}
-                                    {step.title}
-                                  </h4>
-                                  <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">{step.content}</p>
-                                </div>
-                              </div>
-                            ))}
+                    {/* AI Reasoning Flow */}
+                    <div className="flex gap-4">
+                       <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#8EC5FC] to-[#E0C3FC] flex items-center justify-center shrink-0 shadow-lg">
+                          <Bot size={18} className="text-white" />
+                       </div>
+                       <div className="flex-1 space-y-4">
+                          <div className="bg-blue-50/50 border border-blue-100/50 px-5 py-3 rounded-3xl rounded-tl-none">
+                             <p className="text-[13px] text-slate-700 font-medium leading-relaxed">
+                                已成功解析您的诉求。正在为您检索<span className="text-blue-600 font-black">历史卡项</span>与<span className="text-blue-600 font-black">肤质报告</span>...
+                             </p>
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                          
+                          {/* Inference Workflow */}
+                          <div className="space-y-2 pl-2 border-l-2 border-slate-100">
+                             <div className="flex items-center gap-3 py-1">
+                                <CheckCircle2 size={12} className="text-[#52C41A]" />
+                                <span className="text-[11px] font-black italic text-slate-400">语义识别：法令纹 (Type: Sagging) / 暗沉 (Type: Pigment)</span>
+                             </div>
+                             <div className="flex items-center gap-3 py-1">
+                                <CheckCircle2 size={12} className="text-[#52C41A]" />
+                                <span className="text-[11px] font-black italic text-slate-400">资产关联：发现 2 次面部热玛吉余额 (Exp: 2025.12)</span>
+                             </div>
+                             <div className="flex items-center gap-3 py-1">
+                                <CheckCircle2 size={12} className="text-[#52C41A]" />
+                                <span className="text-[11px] font-black italic text-slate-700">方案生成：优先执行卡内提拉，补充光子嫩肤提亮</span>
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+
+                    {/* Final AI Summary */}
+                    <div className="flex gap-4">
+                       <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#8EC5FC] to-[#E0C3FC] flex items-center justify-center shrink-0" />
+                       <div className="flex-1 bg-white border border-slate-100 p-5 rounded-3xl shadow-sm">
+                          <p className="text-[13px] text-slate-800 font-bold leading-relaxed">
+                            建议今日预约一次<span className="text-blue-500">热玛吉</span>，并加购<span className="text-purple-500">M22光子嫩肤</span>作为两周后的肤质补给。
+                          </p>
+                       </div>
+                    </div>
+                  </div>
+
+                  <div className="px-6 py-4 bg-white/50 border-t border-slate-50 relative">
+                     <input 
+                       type="text" 
+                       placeholder="追问或修改方案细节..." 
+                       className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3 px-5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all"
+                     />
+                     <button className="absolute right-9 top-1/2 -translate-y-1/2 text-blue-500 hover:scale-110 transition-transform">
+                        <ArrowRight size={18} />
+                     </button>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="p-5 bg-white border-t border-slate-50">
-              <div className="flex gap-3 items-center">
-                <input 
-                  type="text" 
-                  placeholder="询问更多治疗细节..." 
-                  className="flex-1 bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-sm font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#52C41A]/20 transition-all"
-                />
-                <button className="w-12 h-12 bg-[#52C41A] text-white rounded-2xl flex items-center justify-center shadow-lg shadow-[#52C41A]/30 hover:scale-105 transition-all">
-                  <ArrowRight size={20} strokeWidth={3} />
-                </button>
+            <div className="p-10 pt-0 opacity-40 pointer-events-none grayscale">
+              <div className="p-8 bg-slate-50/50 rounded-[40px] border border-slate-100 flex items-center justify-between group">
+                <div className="flex items-center gap-5">
+                   <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center text-blue-500 shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
+                      <Maximize2 size={28} />
+                   </div>
+                   <div>
+                      <h4 className="text-lg font-black text-slate-900 tracking-tight">预览改善预演</h4>
+                      <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-0.5">Simulation vs Reality View</p>
+                   </div>
+                </div>
+                <div className="flex items-center gap-4">
+                   <div className="text-right">
+                      <p className="text-[10px] font-black text-slate-300 uppercase">Est. Lift</p>
+                      <p className="text-xl font-black text-blue-500 tracking-tighter">+40%</p>
+                   </div>
+                   <ArrowRight size={20} className="text-slate-300 group-hover:translate-x-1 transition-transform" />
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Right Column: 8-Week Transformation Roadmap */}
-        <section className="col-span-12 lg:col-span-8 h-full flex flex-col pt-2 overflow-hidden">
-          <div className="flex-1 bg-white rounded-[32px] border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.03)] flex flex-col overflow-hidden">
-            {/* Top Header: Cycle Overview */}
-            <div className="px-8 py-5 border-b border-slate-50 bg-[#52C41A]/5 flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="px-2 py-0.5 bg-[#52C41A] text-white text-[9px] font-bold rounded-md uppercase tracking-wider">方案核定版</div>
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">AesthetiCal Intelligence Plan</span>
-                </div>
-                <h2 className="text-xl font-black text-slate-900 tracking-tight">紧致提亮 · 双月阶梯计划</h2>
-              </div>
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <Clock size={14} className="text-slate-400" />
-                  <span className="text-xs font-bold text-slate-500 underline decoration-slate-200 decoration-2 underline-offset-4">60 天周期</span>
-                </div>
-                <div className="px-4 py-2 bg-white rounded-xl border border-[#52C41A]/20 shadow-sm">
-                  <p className="text-[9px] font-bold text-slate-400">方案匹配度</p>
-                  <p className="text-sm font-black text-[#52C41A]">98%</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto">
-              {/* AI人脸分析模块 (Visual Diagnosis) */}
-              <div className="p-8 border-b border-slate-50 flex gap-12 items-center bg-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-purple-50/30 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
-                
-                {/* Face Portrait with Markers */}
-                <div className="relative w-64 h-64 shrink-0">
-                  <div className="absolute inset-0 bg-slate-50 rounded-[48px] border border-slate-100 flex items-center justify-center overflow-hidden">
-                    <img 
-                      src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400" 
-                      alt="Facial Portrait"
-                      className="w-full h-full object-cover opacity-60"
-                    />
-                    <div className="absolute inset-0 bg-[#52C41A]/5 mix-blend-multiply" />
-                  </div>
-                  
-                  {/* Nasolabial Fold Marker */}
-                  <motion.div 
-                    animate={{ scale: [1, 1.1, 1], opacity: [0.8, 1, 0.8] }} transition={{ repeat: Infinity, duration: 3 }}
-                    className="absolute top-[62%] right-[32%] z-20"
-                  >
-                    <div className="w-5 h-5 bg-amber-400 rounded-full flex items-center justify-center shadow-lg border-2 border-white cursor-help group/marker">
-                      <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping" />
-                    </div>
-                    <div className="absolute left-7 top-1/2 -translate-y-1/2 bg-white/95 backdrop-blur-md border border-slate-200 px-3 py-1.5 rounded-xl shadow-xl w-32 border-l-4 border-l-amber-400 pointer-events-none">
-                      <p className="text-[10px] font-black text-slate-900">法令纹区 (松弛)</p>
-                      <p className="text-[9px] text-amber-600 font-bold">改善潜力: +40%</p>
-                    </div>
-                  </motion.div>
-
-                  {/* Dullness Marker */}
-                  <motion.div 
-                    animate={{ scale: [1, 1.1, 1], opacity: [0.8, 1, 0.8] }} transition={{ repeat: Infinity, duration: 4, delay: 0.5 }}
-                    className="absolute top-[38%] left-[25%] z-20"
-                  >
-                    <div className="w-5 h-5 bg-purple-400 rounded-full flex items-center justify-center shadow-lg border-2 border-white cursor-help group/marker">
-                      <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping" />
-                    </div>
-                    <div className="absolute right-7 top-1/2 -translate-y-1/2 bg-white/95 backdrop-blur-md border border-slate-200 px-3 py-1.5 rounded-xl shadow-xl w-32 border-r-4 border-r-purple-400 pointer-events-none">
-                      <p className="text-[10px] font-black text-slate-900 text-right">面颊区 (暗沉)</p>
-                      <p className="text-[9px] text-purple-600 font-bold text-right">预计提亮: +20%</p>
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Progress and Value Panel */}
-                <div className="flex-1 space-y-6">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="p-1.5 bg-purple-100 rounded-lg">
-                        <Target size={16} className="text-purple-600" />
-                      </div>
-                      <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest leading-none">皮肤问题可视化诊断</h3>
-                    </div>
-                    <p className="text-xs text-slate-400 font-bold ml-9">AI Facial Insight Analysis & Pre-visualization</p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-5 bg-[#52C41A]/5 rounded-[24px] border border-[#52C41A]/10">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Zap size={14} className="text-[#52C41A]" />
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">热玛吉提升感</span>
-                      </div>
-                      <p className="text-lg font-black text-[#52C41A]">40% <span className="text-[10px] text-slate-300 font-normal ml-0.5">EST.</span></p>
-                    </div>
-                    <div className="p-5 bg-purple-50 rounded-[24px] border border-purple-100">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Sparkles size={14} className="text-purple-600" />
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">肤色提亮感</span>
-                      </div>
-                      <p className="text-lg font-black text-purple-600">20% <span className="text-[10px] text-slate-300 font-normal ml-0.5">EST.</span></p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-6 pt-2">
-                     <div className="flex items-center gap-2">
-                       <div className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-sm ring-2 ring-amber-100" />
-                       <span className="text-[10px] font-bold text-slate-400">目前状态</span>
-                     </div>
-                     <div className="flex items-center gap-2">
-                       <div className="w-2.5 h-2.5 rounded-full bg-[#52C41A] shadow-sm ring-2 ring-[#52C41A]/10" />
-                       <span className="text-[10px] font-bold text-slate-400">改善预演</span>
-                     </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Body: 8-Week Gantt Roadmap */}
-              <div className="p-8 space-y-6">
-                <div className="flex items-center justify-between">
-                   <div className="flex items-center gap-2">
-                      <CalendarDays size={18} className="text-slate-400" />
-                      <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">8-Week Transformation Roadmap</h3>
+        {/* Right: 8-Week Transformation Roadmap (Glassmorphism) */}
+        <section className="col-span-12 lg:col-span-7 h-full flex flex-col pt-2">
+           <div className="flex-1 bg-white/40 backdrop-blur-3xl rounded-[56px] border border-white/60 shadow-[0_30px_60px_rgba(0,0,0,0.03)] flex flex-col overflow-hidden relative">
+              {/* Header: Roadmap Title */}
+              <div className="p-10 border-b border-white/40 flex items-center justify-between bg-white/10">
+                 <div>
+                   <div className="flex items-center gap-2 mb-2">
+                     <div className="px-2.5 py-0.5 bg-slate-900 text-white text-[10px] font-black rounded-lg uppercase tracking-widest">Confirmed Plan</div>
+                     <span className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 ml-2 italic">Aesthetic Roadmap v4.2</span>
                    </div>
-                   <div className="flex gap-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded bg-[#52C41A]" />
-                        <span className="text-[10px] font-bold text-slate-400">卡内消耗</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded border border-[#52C41A] border-dashed" />
-                        <span className="text-[10px] font-bold text-slate-400">建议加购</span>
-                      </div>
-                   </div>
-                </div>
+                   <h2 className="text-4xl font-black text-slate-900 tracking-tighter">8 周变美巡航计划</h2>
+                 </div>
+                 <div className="flex flex-col items-end">
+                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Compliance Rate</p>
+                    <p className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#8EC5FC] to-[#E0C3FC]">98.2%</p>
+                 </div>
+              </div>
 
-                <div className="overflow-x-auto pb-4">
-                  <div className="min-w-[1000px] grid grid-cols-8 gap-4 items-stretch">
-                    {roadmap.map((item, idx) => (
-                      <motion.div 
-                        key={idx}
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: idx * 0.05 }}
-                        className={`relative flex flex-col rounded-[24px] p-5 transition-all cursor-default border ${
-                          item.type === 'in-card' 
-                            ? 'bg-[#52C41A] text-white border-[#52C41A] shadow-lg shadow-[#52C41A]/20 ring-4 ring-white'
-                            : item.type === 'out-card'
-                            ? 'bg-white border-[#52C41A]/30 border-dashed border-2 shadow-sm'
-                            : 'bg-white/50 border-slate-100'
-                        }`}
-                      >
-                        {/* Week Header */}
-                        <div className="flex items-center justify-between mb-4">
-                          <div className={`text-[10px] font-black px-2 py-0.5 rounded-md ${
-                            item.type === 'in-card' ? 'bg-white/20' : 'bg-slate-100 text-slate-400'
-                          }`}>
-                            W{item.week}
-                          </div>
-                          {item.isPaid && <ShieldCheck size={14} className={item.type === 'in-card' ? 'text-white/60' : 'text-[#52C41A]'} />}
-                        </div>
+              {/* Vertical Scroll Area */}
+              <div className="flex-1 overflow-y-auto p-12 space-y-8 relative">
+                 <div className="absolute left-[71px] top-12 bottom-12 w-px bg-slate-200/50 shadow-[inset_0_0_4px_rgba(0,0,0,0.02)]" />
 
-                        <div className="flex-1 flex flex-col items-center justify-center text-center space-y-3">
-                           <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${
-                             item.type === 'in-card' ? 'bg-white/10' : 'bg-slate-50 text-slate-400'
-                           }`}>
-                              {item.icon}
-                           </div>
-                           <div>
-                              <p className={`text-[9px] font-black uppercase tracking-tighter mb-1 ${
-                                item.type === 'in-card' ? 'text-white/60' : 'text-slate-400'
-                              }`}>{item.phase}</p>
-                              <h4 className="text-xs font-black leading-tight">{item.title}</h4>
-                           </div>
-                        </div>
+                 {roadmap.map((item, idx) => (
+                    <motion.div 
+                      key={idx}
+                      initial={{ opacity: 0, x: 30 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="relative pl-16 group"
+                    >
+                       {/* Week Indicator Capsule */}
+                       <div className="absolute left-0 top-0 w-14 h-14 rounded-[22px] bg-white border border-slate-100 shadow-xl shadow-slate-200/40 flex items-center justify-center z-10 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                          <span className="text-xs font-black text-slate-900 italic">W{item.week}</span>
+                       </div>
 
-                        <div className="mt-4 pt-4 border-t border-current opacity-10 flex flex-col items-center gap-1">
-                           <div className="w-8 h-1 bg-current rounded-full" />
-                           <div className="w-12 h-1 bg-current rounded-full" />
-                        </div>
-
-                        <div className="mt-4">
+                       {/* High-end Capsule Card */}
+                       <div className={`p-8 rounded-[44px] border transition-all duration-500 relative overflow-hidden group/card ${
+                         item.type === 'in-card' 
+                           ? 'bg-white border-blue-100 shadow-xl shadow-blue-500/5 hover:shadow-2xl'
+                           : item.type === 'out-card'
+                           ? 'bg-gradient-to-br from-white to-purple-50/30 border-purple-100 border-dashed hover:border-solid hover:bg-white shadow-xl shadow-purple-500/5 hover:shadow-2xl'
+                           : 'bg-slate-50/40 border-slate-100 opacity-60 hover:opacity-100'
+                       }`}>
+                          {/* Inner Decorative Elements */}
                           {item.type === 'in-card' && (
-                             <span className="text-[9px] font-bold bg-white/20 px-2 py-1 rounded-md">卡内余额核销</span>
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none opacity-50" />
                           )}
-                          {item.type === 'out-card' && (
-                             <div className="space-y-1">
-                                <span className="text-[9px] font-bold text-[#52C41A] bg-[#52C41A]/5 px-2 py-1 rounded-md block text-center">建议加购</span>
-                                <span className="text-[10px] font-black text-slate-900 block text-center">特惠: ￥599</span>
+
+                          <div className="flex items-center justify-between mb-5 relative z-10">
+                             <div className="flex items-center gap-4">
+                                <div className={`w-14 h-14 rounded-[22px] bg-white shadow-lg flex items-center justify-center transition-colors ${
+                                  item.type === 'in-card' ? 'text-blue-500 border border-blue-50' : 'text-purple-500 border border-purple-50'
+                                }`}>
+                                   {item.icon}
+                                </div>
+                                <div>
+                                   <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-1 leading-none">{item.phase}</p>
+                                   <h4 className="text-xl font-black text-slate-900 tracking-tight">{item.title}</h4>
+                                </div>
                              </div>
-                          )}
+                             
+                             <div className="flex flex-col items-end">
+                                {item.type === 'in-card' && (
+                                  <div className="flex flex-col items-end gap-1.5">
+                                    <span className="px-3 py-1 bg-blue-600 text-white text-[9px] font-black rounded-full uppercase tracking-widest shadow-lg shadow-blue-600/20">卡内资产盘活</span>
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Asset Active</span>
+                                  </div>
+                                )}
+                                {item.type === 'out-card' && (
+                                  <div className="flex flex-col items-end gap-1">
+                                    <span className="px-3 py-1 bg-purple-100 text-purple-600 text-[9px] font-black rounded-full uppercase tracking-widest">美学增益建议</span>
+                                    <div className="flex items-baseline gap-1 mt-1">
+                                      <span className="text-lg font-black text-purple-600 leading-none">￥599</span>
+                                      <span className="text-[10px] text-slate-300 font-bold line-through">￥1280</span>
+                                    </div>
+                                  </div>
+                                )}
+                             </div>
+                          </div>
+                          
+                          <p className="text-[13px] text-slate-500 font-medium leading-relaxed max-w-[90%] relative z-10">{item.description}</p>
+                          
                           {item.tips && (
-                             <p className="text-[9px] text-slate-400 italic text-center">{item.tips}</p>
+                            <div className="mt-6 flex items-center gap-2.5 relative z-10">
+                               <div className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full flex items-center gap-2 border border-emerald-100">
+                                 <Activity size={10} />
+                                 <span className="text-[10px] font-black uppercase tracking-widest">{item.tips}</span>
+                               </div>
+                            </div>
                           )}
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
+                       </div>
+                    </motion.div>
+                 ))}
               </div>
-            </div>
 
-            {/* Bottom: Execution & CTA */}
-            <div className="p-8 border-t border-slate-100 bg-white grid grid-cols-12 gap-8 items-center">
-               <div className="col-span-12 lg:col-span-7">
-                  <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100 flex items-center justify-between">
-                     <div className="flex items-center gap-4">
-                        <div className="p-2.5 bg-white rounded-xl shadow-sm">
-                           <CreditCard size={20} className="text-slate-400" />
-                        </div>
-                        <div>
-                           <p className="text-xs font-bold text-slate-900">预算明细汇总</p>
-                           <p className="text-[10px] text-slate-400 mt-0.5">
-                              共计 8 周计划：<span className="text-blue-500 font-bold">卡内消耗 2 项</span>，建议 <span className="text-[#52C41A] font-bold">新增 2 项</span>
-                           </p>
-                        </div>
-                     </div>
-                     <div className="text-right">
-                        <p className="text-[10px] font-bold text-slate-400">预计今日支付</p>
-                        <p className="text-xl font-black text-slate-900">￥599 <span className="text-[10px] text-rose-500 ml-1">立省 ￥681</span></p>
-                     </div>
-                  </div>
-               </div>
-
-               <div className="col-span-12 lg:col-span-5 flex gap-3">
-                  <button className="flex-1 h-14 bg-slate-900 text-white rounded-[22px] font-bold text-sm shadow-xl shadow-slate-200 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2.5">
-                     <CalendarDays size={18} />
-                     一键同步手机日历
-                  </button>
-                  <button className="flex-1 h-14 bg-[#52C41A] text-white rounded-[22px] font-bold text-sm shadow-xl shadow-[#52C41A]/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2.5">
-                     <Smartphone size={18} />
-                     立即预约服务
-                  </button>
-               </div>
-            </div>
-          </div>
+              {/* Bottom: Execution & Call to Action */}
+              <div className="p-10 border-t border-white/40 bg-white/60 backdrop-blur-2xl flex items-center gap-8">
+                 <div className="flex-1 bg-slate-900 rounded-[36px] p-2 flex items-center overflow-hidden">
+                    <div className="flex-1 flex items-center gap-5 pl-6 pr-4">
+                       <div className="w-14 h-14 bg-white/10 rounded-[22px] flex items-center justify-center text-white/60">
+                          <QrCode size={28} strokeWidth={1.5} />
+                       </div>
+                       <div>
+                          <p className="text-white text-base font-black tracking-tight">获取完整美学方案</p>
+                          <p className="text-white/40 text-[10px] uppercase font-black tracking-[0.3em] mt-0.5">Scan to sync your profile</p>
+                       </div>
+                    </div>
+                    <button className="h-16 px-10 bg-white text-slate-900 rounded-[28px] font-black text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-2xl">
+                       即刻生成并排期
+                    </button>
+                 </div>
+                 <div className="flex flex-col items-center gap-2">
+                    <div className="w-16 h-16 rounded-[28px] border border-slate-100 bg-white flex items-center justify-center text-slate-400 cursor-pointer hover:shadow-xl hover:text-slate-900 transition-all">
+                       <Smartphone size={28} strokeWidth={1.5} />
+                    </div>
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">App Link</span>
+                 </div>
+              </div>
+           </div>
         </section>
       </main>
 
-      {/* Admin Stat Footer (Institution Level) */}
+      {/* Decision Intelligence Panel (Bottom Overlay) */}
       <AnimatePresence>
         {isAdminView && (
-          <motion.footer 
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="border-t border-slate-100 bg-white/80 backdrop-blur-md overflow-hidden"
+          <motion.div 
+            initial={{ y: 500, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 500, opacity: 0 }}
+            transition={{ type: "spring", damping: 30, stiffness: 100 }}
+            className="fixed bottom-0 inset-x-0 z-[100] px-12 pb-12"
           >
-             <div className="max-w-[1600px] mx-auto p-10 pt-6">
-               <div className="flex items-center gap-2 mb-6">
-                 <ShieldCheck size={16} className="text-purple-600" />
-                 <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">院内管理决策看板 (机构后端实时联动)</span>
+            <div className="bg-slate-900/95 backdrop-blur-3xl border border-white/10 p-10 rounded-[64px] shadow-[0_50px_150px_rgba(0,0,0,0.6)]">
+               <div className="flex items-center justify-between mb-10">
+                 <div className="flex items-center gap-4">
+                   <div className="w-8 h-8 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400">
+                     <ShieldCheck size={18} />
+                   </div>
+                   <h3 className="text-[11px] font-black text-white/40 uppercase tracking-[0.5em]">Digital Institutional Intelligence Dashboard</h3>
+                 </div>
+                 <div 
+                   onClick={() => setIsAdminView(false)}
+                   className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white cursor-pointer transition-colors"
+                 >
+                   <ChevronDown size={20} />
+                 </div>
                </div>
-               <div className="grid grid-cols-5 gap-6">
+               
+               <div className="grid grid-cols-3 gap-10">
                  {stats.map((stat, idx) => (
                    <motion.div 
                      key={idx}
-                     initial={{ y: 20, opacity: 0 }}
+                     initial={{ y: 30, opacity: 0 }}
                      animate={{ y: 0, opacity: 1 }}
-                     transition={{ delay: idx * 0.1 }}
-                     className="p-6 rounded-[28px] border border-slate-100 bg-white/50 shadow-sm hover:shadow-xl transition-all group"
+                     transition={{ delay: idx * 0.1 + 0.3 }}
+                     className="p-8 rounded-[40px] bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 transition-all flex flex-col items-center text-center group"
                    >
-                     <div className="flex items-center justify-between mb-4">
-                       <div className={`p-2.5 rounded-2xl bg-white shadow-sm group-hover:scale-110 transition-transform ${stat.color}`}>
-                         <stat.icon size={20} />
-                       </div>
-                       <span className="text-2xl font-black text-slate-900 tracking-tighter">{stat.value}</span>
+                     <div className="p-4 bg-white/10 rounded-[24px] text-blue-400 group-hover:scale-110 transition-transform mb-6">
+                       <stat.icon size={28} />
                      </div>
-                     <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{stat.label}</p>
-                     <p className="text-[11px] text-[#52C41A] font-bold mt-1.5 bg-[#52C41A]/5 inline-block px-2 py-0.5 rounded-lg border border-[#52C41A]/10">{stat.subValue}</p>
+                     <p className="text-4xl font-black text-white tracking-tighter mb-2">{stat.value}</p>
+                     <p className="text-[11px] font-black text-white/30 uppercase tracking-[0.3em] mb-3">{stat.label}</p>
+                     <p className="text-[13px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 italic">
+                       {stat.subValue}
+                     </p>
                    </motion.div>
                  ))}
                </div>
-             </div>
-          </motion.footer>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
   );
 }
-
-
